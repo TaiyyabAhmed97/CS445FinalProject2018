@@ -64,6 +64,10 @@ app.route('/parkpay/parks/:parkId')
         res.send(200);
     });
 
+app.route('/parkpay/parks/:parkId/notes')
+    .get(function (req, res) {
+
+    })
 
 //NOTES
 
