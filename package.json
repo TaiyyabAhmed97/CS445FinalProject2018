@@ -1,0 +1,21 @@
+{
+  "name": "cs-445-finalproject2018",
+  "version": "1.0.0",
+  "description": "REST api to sustain a parks management system",
+  "main": "app.js",
+  "scripts": {
+    "test": "nyc tap Tests/*.js",
+    "start": "nodemon src/app.js"
+  },
+  "author": "Taiyyab Ahmed",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "moment": "^2.22.2",
+    "nodemon": "^1.18.4",
+    "nyc": "^13.1.0",
+    "tap": "^12.0.1",
+    "underscore": "^1.9.1"
+  }
+}
