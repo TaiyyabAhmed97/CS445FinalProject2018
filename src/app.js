@@ -3,6 +3,7 @@ app = express();
 var router = express.Router();
 var bodyparser = require('body-parser');
 var Park = require('../models/Park');
+var Note = require('../models/Note');
 var _ = require('underscore');
 
 
@@ -10,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 var ParkSys = {};
-
+var NoteSys = {};
 
 //PARKS
 
@@ -66,7 +67,27 @@ app.route('/parkpay/parks/:parkId')
 
 app.route('/parkpay/parks/:parkId/notes')
     .get(function (req, res) {
+        let arr = [];
 
+        for (var key in NoteSys) {
+            if (NoteSys[key].pid == req.params.parkId) {
+                arr.push(_.omit(NoteSys[key], ["pid", "vid", "text"]));
+            }
+        }
+        res.send(arr);
+    })
+    .post(function (req, res) {
+        var note = new Note(req.body.vid, req.params.parkId, req.body.title, req.body.text);
+        NoteSys[JSON.stringify(note.nid)] = note;
+        res.send({ "nid": JSON.stringify(note.nid) });
+
+
+    });
+
+app.route('/parkpay/parks/:parkId/notes/:noteId')
+    .get(function (req, res) {
+        note = NoteSys[req.params.noteId];
+        res.send(note);
     })
 
 //NOTES

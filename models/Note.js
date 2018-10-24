@@ -1,9 +1,10 @@
+var moment = require('moment');
 class Note {
-    constructor(vid, pid, date, title, text) {
+    constructor(vid, pid, title, text) {
         this.nid = Note.getnid();
-        this.vid = vid;
         this.pid = pid;
-        this.date = date;
+        this.vid = vid;
+        this.date = Note.setdate();
         this.title = title;
         this.text = text;
     }
@@ -13,6 +14,10 @@ class Note {
         else this.nid++;
         return this.nid;
     }
-    static getvid() { }
+
+    static setdate() {
+        if (!this.date_ordered) { this.date_ordered = moment().format("YYYY-MM-DD"); }
+        return this.date_ordered;
+    }
 }
 module.exports = Note;
