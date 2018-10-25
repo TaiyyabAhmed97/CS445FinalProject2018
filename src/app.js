@@ -94,27 +94,56 @@ app.route('/parkpay/parks/:parkId/notes/:noteId')
 
 app.route('/parkpay/notes')
     .get(function (req, res) {
-        var newarr = [];
-        for (k in ParkSys) {
-            var noteArr = {
-                "pid": Number,
-                "notes": new Array()
-            };
-            for (l in NoteSys) {
-                if (NoteSys[l].pid == k) {
-                    noteArr.notes.push(NoteSys[l].format());
+        if (_.has(req.query, 'key')) {
+            var newarr = [];
+            for (k in ParkSys) {
+                var noteArr = {
+                    "pid": Number,
+                    "notes": new Array()
+                };
+                for (l in NoteSys) {
+                    if (NoteSys[l].pid == k && NoteSys[l].searchKeyword(req.query.key)) {
+                        noteArr.notes.push(NoteSys[l].format());
+                    }
                 }
+                noteArr.pid = k;
+                newarr.push(noteArr);
             }
-            noteArr.pid = k;
-            newarr.push(noteArr);
+            res.send(newarr);
         }
-        res.send(newarr);
+        else {
+            var newarr = [];
+            for (k in ParkSys) {
+                var noteArr = {
+                    "pid": Number,
+                    "notes": new Array()
+                };
+                for (l in NoteSys) {
+                    if (NoteSys[l].pid == k) {
+                        noteArr.notes.push(NoteSys[l].format());
+                    }
+                }
+                noteArr.pid = k;
+                newarr.push(noteArr);
+            }
+            res.send(newarr);
+        }
+
     });
 app.route('/parkpay/notes/:noteId')
     .get(function (req, res) {
         var obj = NoteSys[req.params.noteId];
         res.send(obj);
     })
+    .put(function (req, res) {
+        NoteSys[req.params.noteId].updateNote(req.body);
+        res.send(200);
+    })
+    .delete(function (req, res) {
+        delete NoteSys[req.params.noteId];
+        res.send(200);
+    });
+
 
 
 

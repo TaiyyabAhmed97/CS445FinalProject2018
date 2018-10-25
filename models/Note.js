@@ -26,6 +26,22 @@ class Note {
         return retObj;
     }
 
+    updateNote(note) {
+        this.vid = note.vid;
+        this.title = note.title;
+        this.text = note.text;
+    }
+
+    searchKeyword(key) {
+        if (this.date.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.title.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.text.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else {
+            return false;
+        }
+
+    }
+
 
 }
 module.exports = Note;

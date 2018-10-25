@@ -30,3 +30,28 @@ var formattedobj = {
 tap.equal(note.format().nid, formattedobj.nid);
 tap.equal(note.format().date, formattedobj.date);
 tap.equal(note.format().title, formattedobj.title);
+
+
+//Note.updateNote()
+
+changedobj = {
+    "vid": 511,
+    "title": "very nicecampground",
+    "text": "This place is horrible."
+};
+
+note.updateNote(changedobj);
+tap.equal(note.vid, changedobj.vid);
+tap.equal(note.title, changedobj.title);
+tap.equal(note.text, changedobj.text);
+
+//Note.searchKeyword()
+
+let bool = note.searchKeyword(moment().format("YYYY-MM-DD"))
+tap.equal(true, bool);
+bool = note.searchKeyword("very");
+tap.equal(true, bool);
+bool = note.searchKeyword("this");
+tap.equal(true, bool);
+bool = note.searchKeyword("fire");
+tap.equal(false, bool);
