@@ -71,7 +71,7 @@ app.route('/parkpay/parks/:parkId/notes')
 
         for (var key in NoteSys) {
             if (NoteSys[key].pid == req.params.parkId) {
-                arr.push(_.omit(NoteSys[key], ["pid", "vid", "text"]));
+                arr.push(NoteSys[key].format());
             }
         }
         res.send(arr);
@@ -92,6 +92,29 @@ app.route('/parkpay/parks/:parkId/notes/:noteId')
 
 //NOTES
 
+app.route('/parkpay/notes')
+    .get(function (req, res) {
+        var newarr = [];
+        for (k in ParkSys) {
+            var noteArr = {
+                "pid": Number,
+                "notes": new Array()
+            };
+            for (l in NoteSys) {
+                if (NoteSys[l].pid == k) {
+                    noteArr.notes.push(NoteSys[l].format());
+                }
+            }
+            noteArr.pid = k;
+            newarr.push(noteArr);
+        }
+        res.send(newarr);
+    });
+app.route('/parkpay/notes/:noteId')
+    .get(function (req, res) {
+        var obj = NoteSys[req.params.noteId];
+        res.send(obj);
+    })
 
 
 

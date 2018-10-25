@@ -1,4 +1,5 @@
 var moment = require('moment');
+var _ = require('underscore');
 class Note {
     constructor(vid, pid, title, text) {
         this.nid = Note.getnid();
@@ -19,5 +20,12 @@ class Note {
         if (!this.date_ordered) { this.date_ordered = moment().format("YYYY-MM-DD"); }
         return this.date_ordered;
     }
+
+    format() {
+        let retObj = _.omit(this, ["pid", "vid", "text"]);
+        return retObj;
+    }
+
+
 }
 module.exports = Note;
