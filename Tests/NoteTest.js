@@ -55,3 +55,4 @@ bool = note.searchKeyword("this");
 tap.equal(true, bool);
 bool = note.searchKeyword("fire");
 tap.equal(false, bool);
+
