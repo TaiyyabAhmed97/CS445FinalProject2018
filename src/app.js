@@ -4,6 +4,8 @@ var router = express.Router();
 var bodyparser = require('body-parser');
 var Park = require('../models/Park');
 var Note = require('../models/Note');
+var Order = require('../models/Order');
+var Visitor = require('../models/Visitor');
 var _ = require('underscore');
 
 
@@ -12,6 +14,8 @@ app.use(express.urlencoded());
 
 var ParkSys = {};
 var NoteSys = {};
+var OrderSys = {};
+var VisitorSys = {};
 
 //PARKS
 
@@ -144,7 +148,33 @@ app.route('/parkpay/notes/:noteId')
         res.send(200);
     });
 
+app.route('/parkpay/orders')
+    .post(function (req, res) {
+        var visitor = new Visitor(req.body.visitor.name, req.body.visitor.email, req.body.visitor.payment_info);
+        var order = new Order(req.body.pid, req.body.vehicle, visitor.vid);
+        order.processOrder(ParkSys[order.pid]);
+        console.log(order);
+        OrderSys[order.oid] = order;
+        VisitorSys[visitor.vid] = visitor;
+        visitor.processNotes()
+        res.send({ "oid": JSON.stringify(order.oid) });
+    })
+    .get(function (req, res) {
+        let arr = []
+        for (x in OrderSys) {
+            arr.push(OrderSys[x].format());
+        }
+        res.send(arr);
+    })
+
+app.route('/parkpay/orders/:orderId')
+    .get(function (req, res) {
+        let id = req.params.orderId;
+        let obj = OrderSys[id];
+        retObj = obj.getOneOrder(VisitorSys[obj.vid]);
+        res.send(retObj);
 
 
+    })
 
 app.listen(8080);
