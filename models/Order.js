@@ -77,5 +77,21 @@ class Order {
         };
         return retObj;
     }
+
+    searchKeyword(key, visitor) {
+        if (JSON.stringify(this.amount).toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.date.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.vehicle.state.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.vehicle.plate.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.vehicle.type.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (visitor.name.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (visitor.email.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.payment_processing.state.card_transaction_id.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else if (this.payment_processing.state.date_and_time.toLowerCase().includes(key.toLowerCase())) { return true; }
+        else {
+            return false;
+        }
+
+    }
 }
 module.exports = Order;

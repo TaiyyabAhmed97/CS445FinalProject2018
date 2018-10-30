@@ -30,6 +30,13 @@ app.route('/parkpay/parks')
 
     .get(function (req, res) {
         if (_.has(req.query, 'key')) {
+            if (req.query.key == "") {
+                let arr = []
+                for (var key in ParkSys) {
+                    arr.push(_.omit(ParkSys[key], ["pid"]));
+                }
+                res.send(arr);
+            }
             var arr = [];
             for (var key in ParkSys) {
                 if (ParkSys[key].searchKeyword(req.query.key)) {
@@ -160,11 +167,30 @@ app.route('/parkpay/orders')
         res.send({ "oid": JSON.stringify(order.oid) });
     })
     .get(function (req, res) {
-        let arr = []
-        for (x in OrderSys) {
-            arr.push(OrderSys[x].format());
+        if (_.has(req.query, 'key')) {
+            if (req.query.key == "") {
+                let arr = []
+                for (x in OrderSys) {
+                    arr.push(OrderSys[x].format());
+                }
+                res.send(arr);
+            }
+            var arr = [];
+            for (key in OrderSys) {
+                if (OrderSys[key].searchKeyword(req.query.key, VisitorSys[OrderSys[key].vid])) {
+                    arr.push(OrderSys[key].format());
+                }
+            }
+            res.send(arr);
         }
-        res.send(arr);
+        else {
+            let arr = []
+            for (x in OrderSys) {
+                arr.push(OrderSys[x].format());
+            }
+            res.send(arr);
+        }
+
     })
 
 app.route('/parkpay/orders/:orderId')
@@ -175,6 +201,54 @@ app.route('/parkpay/orders/:orderId')
         res.send(retObj);
 
 
+    });
+
+app.route('/parkpay/visitors')
+    .get(function (req, res) {
+        if (_.has(req.query, 'key')) {
+            var arr = [];
+            for (key in VisitorSys) {
+                if (VisitorSys[key].searchKeyword(req.query.key)) {
+                    arr.push(VisitorSys[key].format());
+                }
+            }
+            res.send(arr);
+        }
+        else {
+            var arr = [];
+            for (key in VisitorSys) {
+                arr.push(VisitorSys[key].format());
+            }
+            res.send(arr);
+        }
+
     })
+app.route('/parkpay/visitors/:visitorId')
+    .get(function (req, res) {
+        var vid = req.params.visitorId;
+        for (key in OrderSys) {
+            if (vid == OrderSys[key].vid) {
+                VisitorSys[vid].orders.push(_.omit(OrderSys[key].format(), ["amount", "type"]));
+            }
+        }
+        for (key in NoteSys) {
+            if (vid == NoteSys[key].vid) {
+                VisitorSys[vid].notes.push(NoteSys[key].format());
+            }
+        }
+        res.send(VisitorSys[vid]);
+    });
+app.route('/parkpay/reports')
+    .get(function (req, res) {
+        let obj = [{
+            rid: "907",
+            name: "Admissions report"
+        }, {
+            mrid: "911",
+            name: "Revenue report"
+        }
+        ];
+        res.send(obj);
+    });
 
 app.listen(8080);
