@@ -12,6 +12,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "joi": "^14.0.2",
     "moment": "^2.22.2",
     "nodemon": "^1.18.4",
     "nyc": "^13.1.0",

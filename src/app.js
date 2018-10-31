@@ -6,6 +6,7 @@ var Park = require('../models/Park');
 var Note = require('../models/Note');
 var Order = require('../models/Order');
 var Visitor = require('../models/Visitor');
+var Valid = require('../models/Valid');
 var _ = require('underscore');
 
 
@@ -16,16 +17,23 @@ var ParkSys = {};
 var NoteSys = {};
 var OrderSys = {};
 var VisitorSys = {};
-
+let Validify = new Valid();
 //PARKS
 
 
 
 app.route('/parkpay/parks')
     .post(function (req, res) {
-        var park = new Park(req.body.location_info, req.body.payment_info);
-        ParkSys[JSON.stringify(park.pid)] = park;
-        res.send({ "pid": JSON.stringify(park.pid) });
+        let obj = Validify.parkPost(req.body);
+        if (obj == null) {
+            var park = new Park(req.body.location_info, req.body.payment_info);
+            ParkSys[JSON.stringify(park.pid)] = park;
+            res.send({ "pid": JSON.stringify(park.pid) }, 201);
+        }
+        else {
+            res.send(obj, 400);
+        }
+
     })
 
     .get(function (req, res) {
@@ -58,26 +66,46 @@ app.route('/parkpay/parks')
 app.route('/parkpay/parks/:parkId')
     .put(function (req, res) {
         id = req.params.parkId;
-        console.log(ParkSys);
-        console.log(id);
-        ParkSys[id].updatePark(req.body);
-        res.send(200);
+        //console.log(ParkSys);
+        //console.log(id);
+        if (ParkSys[id] == null) {
+            res.send(404);
+        }
+        let obj = Validify.putPark(req.body, id);
+        if (obj == null) {
+            ParkSys[id].updatePark(req.body);
+            res.send(204);
+        }
+        else {
+            res.send(obj, 400);
+        }
+
     })
 
     .get(function (req, res) {
+        id = req.params.parkId;
+        if (ParkSys[id] == null) {
+            res.send(404);
+        }
         park = ParkSys[req.params.parkId];
         res.send(park);
     })
 
     .delete(function (req, res) {
         id = req.params.parkId;
-        delete ParkSys[id]
-        console.log(ParkSys);
-        res.send(200);
+        if (ParkSys[id] == null) {
+            res.send(404);
+        }
+        delete ParkSys[id];
+        res.send(204);
     });
 
 app.route('/parkpay/parks/:parkId/notes')
     .get(function (req, res) {
+        id = req.params.parkId;
+        if (ParkSys[id] == null) {
+            res.send(404);
+        }
         let arr = [];
 
         for (var key in NoteSys) {
