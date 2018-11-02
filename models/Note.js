@@ -2,7 +2,7 @@ var moment = require('moment');
 var _ = require('underscore');
 class Note {
     constructor(vid, pid, title, text) {
-        this.nid = Note.getnid();
+        this.nid = JSON.stringify(Note.getnid());
         this.pid = pid;
         this.vid = vid;
         this.date = Note.setdate();
@@ -22,7 +22,7 @@ class Note {
     }
 
     format() {
-        let retObj = _.omit(this, ["pid", "vid", "text"]);
+        let retObj = _.omit(this, ["vid", "text"]);
         return retObj;
     }
 

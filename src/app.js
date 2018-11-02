@@ -7,6 +7,7 @@ var Note = require('../models/Note');
 var Order = require('../models/Order');
 var Visitor = require('../models/Visitor');
 var Valid = require('../models/Valid');
+var Report = require('../models/Reports');
 var _ = require('underscore');
 
 
@@ -27,8 +28,8 @@ app.route('/parkpay/parks')
         let obj = Validify.parkPost(req.body);
         if (obj == null) {
             var park = new Park(req.body.location_info, req.body.payment_info);
-            ParkSys[JSON.stringify(park.pid)] = park;
-            res.send({ "pid": JSON.stringify(park.pid) }, 201);
+            ParkSys[park.pid] = park;
+            res.send({ "pid": park.pid }, 201);
         }
         else {
             res.send(obj, 400);
@@ -41,14 +42,14 @@ app.route('/parkpay/parks')
             if (req.query.key == "") {
                 let arr = []
                 for (var key in ParkSys) {
-                    arr.push(_.omit(ParkSys[key], ["pid"]));
+                    arr.push(_.omit(ParkSys[key], ["payment_info"]));
                 }
                 res.send(arr);
             }
             var arr = [];
             for (var key in ParkSys) {
                 if (ParkSys[key].searchKeyword(req.query.key)) {
-                    arr.push(ParkSys[key]);
+                    arr.push(_.omit(ParkSys[key], ["payment_info"]));
                 }
             }
             console.log(ParkSys['123'].searchKeyword(req.query.key));
@@ -57,7 +58,7 @@ app.route('/parkpay/parks')
         else {
             let arr = []
             for (var key in ParkSys) {
-                arr.push(_.omit(ParkSys[key], ["pid"]));
+                arr.push(_.omit(ParkSys[key], ["payment_info"]));
             }
             res.send(arr);
         }
@@ -116,9 +117,17 @@ app.route('/parkpay/parks/:parkId/notes')
         res.send(arr);
     })
     .post(function (req, res) {
-        var note = new Note(req.body.vid, req.params.parkId, req.body.title, req.body.text);
-        NoteSys[JSON.stringify(note.nid)] = note;
-        res.send({ "nid": JSON.stringify(note.nid) });
+        let retObj = Validify.notePost(req.body, req.params.parkId, OrderSys);
+        if (retObj != null) {
+            res.send(retObj, 400);
+        }
+        else {
+            var note = new Note(req.body.vid, req.params.parkId, req.body.title, req.body.text);
+            VisitorSys[req.body.vid].notes.push(note.format());
+            NoteSys[note.nid] = note;
+            res.send({ "nid": note.nid }, 201);
+        }
+
 
 
     });
@@ -185,14 +194,38 @@ app.route('/parkpay/notes/:noteId')
 
 app.route('/parkpay/orders')
     .post(function (req, res) {
-        var visitor = new Visitor(req.body.visitor.name, req.body.visitor.email, req.body.visitor.payment_info);
-        var order = new Order(req.body.pid, req.body.vehicle, visitor.vid);
-        order.processOrder(ParkSys[order.pid]);
-        console.log(order);
-        OrderSys[order.oid] = order;
-        VisitorSys[visitor.vid] = visitor;
-        visitor.processNotes()
-        res.send({ "oid": JSON.stringify(order.oid) });
+        let vid = '';
+        for (var x in VisitorSys) {
+            if (VisitorSys[x].email == req.body.visitor.email) {
+                vid = VisitorSys[x].vid;
+            }
+
+        }
+        if (vid === '') {
+            var visitor = new Visitor(req.body.visitor.name, req.body.visitor.email, req.body.visitor.payment_info);
+            var order = new Order(req.body.pid, req.body.vehicle, visitor.vid);
+            order.processOrder(ParkSys[order.pid]);
+            //console.log(order);
+            OrderSys[order.oid] = order;
+            VisitorSys[visitor.vid] = visitor;
+            VisitorSys[visitor.vid].orders.push(_.omit(OrderSys[order.oid].format(), ["amount", "type"]));
+            console.log('created new order with new visitort');
+            console.log(order);
+            res.send({ "oid": order.oid }, 201);
+        } else {
+            var order = new Order(req.body.pid, req.body.vehicle, vid);
+            order.processOrder(ParkSys[order.pid]);
+            //console.log(order);
+            OrderSys[order.oid] = order;
+            VisitorSys[vid].orders.push(_.omit(OrderSys[order.oid].format(), ["amount", "type"]));
+            //visitor.processNotes()
+            console.log('created new order with old visitort');
+            console.log(order);
+            res.send({ "oid": order.oid }, 201);
+        }
+
+
+
     })
     .get(function (req, res) {
         if (_.has(req.query, 'key')) {
@@ -253,18 +286,16 @@ app.route('/parkpay/visitors')
     })
 app.route('/parkpay/visitors/:visitorId')
     .get(function (req, res) {
+        var i;
+        var j = 0;
         var vid = req.params.visitorId;
-        for (key in OrderSys) {
-            if (vid == OrderSys[key].vid) {
-                VisitorSys[vid].orders.push(_.omit(OrderSys[key].format(), ["amount", "type"]));
-            }
-        }
-        for (key in NoteSys) {
-            if (vid == NoteSys[key].vid) {
-                VisitorSys[vid].notes.push(NoteSys[key].format());
-            }
-        }
-        res.send(VisitorSys[vid]);
+        let obj = [];
+        console.log("BOOP");
+        console.log(NoteSys);
+        console.log("BEEP");
+        console.log(OrderSys);
+        console.log("BaaP");
+        res.send(VisitorSys[vid].getOneFormat());
     });
 app.route('/parkpay/reports')
     .get(function (req, res) {
@@ -278,5 +309,23 @@ app.route('/parkpay/reports')
         ];
         res.send(obj);
     });
+
+app.route('/parkpay/reports/:rid')
+    .get(function (req, res) {
+        let name = '';
+        if (req.params.rid == 907) {
+            name = "Admissions Report"
+        }
+        else {
+            name = "Revenue Report"
+        }
+        var report = new Report(req.params.rid, name);
+        if (name == "Admissions Report") {
+            report.genAdmissions(ParkSys, OrderSys);
+        }
+        else {
+            report.genRevenue(ParkSys, OrderSys);
+        }
+    })
 
 app.listen(8080);

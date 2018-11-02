@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 class Park {
     constructor(location_info, payment_info) {
-        this.pid = Park.getpid();
+        this.pid = JSON.stringify(Park.getpid());
         this.location_info = location_info;
         this.payment_info = payment_info
     }

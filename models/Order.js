@@ -2,7 +2,7 @@ var moment = require('moment');
 var _ = require('underscore');
 class Order {
     constructor(pid, vehicle, vid) {
-        this.oid = Order.getoid();
+        this.oid = JSON.stringify(Order.getoid());
         this.pid = pid;
         this.amount = null;
         this.vid = vid;

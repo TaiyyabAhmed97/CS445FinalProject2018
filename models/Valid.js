@@ -30,9 +30,9 @@ class Valid {
 
     parkPostPay(park) {
         let schema = Joi.object().keys({
-            motorcycle: Joi.array().items(Joi.number().integer().min(0).error(new Error('1'))),
-            car: Joi.array().items(Joi.number().integer().min(0).error(new Error('2'))),
-            rv: Joi.array().items(Joi.number().integer().min(0).error(new Error('3')))
+            motorcycle: Joi.array().items(Joi.number().min(0).error(new Error('1'))),
+            car: Joi.array().items(Joi.number().min(0).error(new Error('2'))),
+            rv: Joi.array().items(Joi.number().min(0).error(new Error('3')))
         });
         console.log(park.payment_info);
         const result = Joi.validate(park.payment_info, schema);
@@ -72,6 +72,26 @@ class Valid {
             obj.instance += "/" + pid;
             return obj;
         }
+    }
+
+    notePost(note, pid, Orders) {
+        console.log(Orders);
+        let obj = {
+            "type": "http://cs.iit.edu/~virgil/cs445/project/api/problems/data-validation",
+            "title": "Your request data didn't pass validation",
+            "detail": "You may not post a note to a park unless you paid for admission at that park",
+            "status": 400,
+            "instance": "/parks/"
+        };
+        for (var k in Orders) {
+            if ((Orders[k].pid == pid) && (Orders[k].vid == note.vid)) {
+                return null;
+
+            }
+        }
+        obj.instance += pid;
+        return obj;
+
     }
 
 }

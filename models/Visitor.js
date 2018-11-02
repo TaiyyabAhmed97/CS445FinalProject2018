@@ -1,7 +1,7 @@
 var _ = require('underscore');
 class Visitor {
     constructor(name, email, payment) {
-        this.vid = Visitor.getvid()
+        this.vid = JSON.stringify(Visitor.getvid());
         this.name = name;
         this.email = email;
         this.payment = payment;
@@ -18,6 +18,13 @@ class Visitor {
 
     format() {
         return _.omit(this, ["payment", "orders", "notes"]);
+    }
+
+    getOneFormat() {
+        let obj = { visitor: { name: this.name, email: this.email } }
+        let obj1 = _.omit(this, ["name", "email", "payment"]);
+        let retObj = Object.assign(obj, obj1);
+        return retObj;
     }
 
     searchKeyword(key) {
