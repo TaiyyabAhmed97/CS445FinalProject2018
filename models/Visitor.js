@@ -4,7 +4,7 @@ class Visitor {
         this.vid = JSON.stringify(Visitor.getvid());
         this.name = name;
         this.email = email;
-        this.payment = payment;
+        this.payment_info = payment;
         this.orders = new Array();
         this.notes = new Array();
 
@@ -17,12 +17,12 @@ class Visitor {
     }
 
     format() {
-        return _.omit(this, ["payment", "orders", "notes"]);
+        return _.omit(this, ["payment_info", "orders", "notes"]);
     }
 
     getOneFormat() {
         let obj = { visitor: { name: this.name, email: this.email } }
-        let obj1 = _.omit(this, ["name", "email", "payment"]);
+        let obj1 = _.omit(this, ["name", "email", "payment_info"]);
         let retObj = Object.assign(obj, obj1);
         return retObj;
     }

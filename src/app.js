@@ -2,6 +2,7 @@ const express = require('express');
 app = express();
 var router = express.Router();
 var bodyparser = require('body-parser');
+var moment = require('moment');
 var Park = require('../models/Park');
 var Note = require('../models/Note');
 var Order = require('../models/Order');
@@ -52,7 +53,6 @@ app.route('/parkpay/parks')
                     arr.push(_.omit(ParkSys[key], ["payment_info"]));
                 }
             }
-            console.log(ParkSys['123'].searchKeyword(req.query.key));
             res.send(arr);
         }
         else {
@@ -209,8 +209,6 @@ app.route('/parkpay/orders')
             OrderSys[order.oid] = order;
             VisitorSys[visitor.vid] = visitor;
             VisitorSys[visitor.vid].orders.push(_.omit(OrderSys[order.oid].format(), ["amount", "type"]));
-            console.log('created new order with new visitort');
-            console.log(order);
             res.send({ "oid": order.oid }, 201);
         } else {
             var order = new Order(req.body.pid, req.body.vehicle, vid);
@@ -219,8 +217,6 @@ app.route('/parkpay/orders')
             OrderSys[order.oid] = order;
             VisitorSys[vid].orders.push(_.omit(OrderSys[order.oid].format(), ["amount", "type"]));
             //visitor.processNotes()
-            console.log('created new order with old visitort');
-            console.log(order);
             res.send({ "oid": order.oid }, 201);
         }
 
@@ -238,6 +234,7 @@ app.route('/parkpay/orders')
             }
             var arr = [];
             for (key in OrderSys) {
+                //console.log(VisitorSys[OrderSys[key].vid])
                 if (OrderSys[key].searchKeyword(req.query.key, VisitorSys[OrderSys[key].vid])) {
                     arr.push(OrderSys[key].format());
                 }
@@ -258,6 +255,7 @@ app.route('/parkpay/orders/:orderId')
     .get(function (req, res) {
         let id = req.params.orderId;
         let obj = OrderSys[id];
+        //console.log(VisitorSys);
         retObj = obj.getOneOrder(VisitorSys[obj.vid]);
         res.send(retObj);
 
@@ -289,12 +287,6 @@ app.route('/parkpay/visitors/:visitorId')
         var i;
         var j = 0;
         var vid = req.params.visitorId;
-        let obj = [];
-        console.log("BOOP");
-        console.log(NoteSys);
-        console.log("BEEP");
-        console.log(OrderSys);
-        console.log("BaaP");
         res.send(VisitorSys[vid].getOneFormat());
     });
 app.route('/parkpay/reports')
@@ -303,7 +295,7 @@ app.route('/parkpay/reports')
             rid: "907",
             name: "Admissions report"
         }, {
-            mrid: "911",
+            rid: "911",
             name: "Revenue report"
         }
         ];
@@ -312,20 +304,36 @@ app.route('/parkpay/reports')
 
 app.route('/parkpay/reports/:rid')
     .get(function (req, res) {
-        let name = '';
-        if (req.params.rid == 907) {
-            name = "Admissions Report"
+        var dates = req.query;
+        if (!(_.has(req.query, 'end_date'))) {
+            if (req.params.rid == 907) {
+                var report = new Report(req.params.rid);
+                report.genAdmissions(ParkSys, OrderSys);
+                res.send(report);
+            }
+            else {
+                var report = new Report(req.params.rid);
+                let obj = report.genRevenue(ParkSys, OrderSys);
+                res.send(obj);
+            }
         }
         else {
-            name = "Revenue Report"
+            if (Validify.ReportDate(dates, req.params.rid) != null) {
+                res.send(Validify.ReportDate(dates, req.params.rid), 400)
+            }
+            if (req.params.rid == 907) {
+                var report = new Report(req.params.rid);
+                report.genAdmissionswDate(ParkSys, OrderSys, dates);
+                res.send(report);
+            }
+            //console.log(dates);
+            //var report = new Report(req.params.rid);
+            //let obj = report.genRevenuewDate(ParkSys, OrderSys);
+            //res.send(obj);
+
+
         }
-        var report = new Report(req.params.rid, name);
-        if (name == "Admissions Report") {
-            report.genAdmissions(ParkSys, OrderSys);
-        }
-        else {
-            report.genRevenue(ParkSys, OrderSys);
-        }
+
     })
 
 app.listen(8080);

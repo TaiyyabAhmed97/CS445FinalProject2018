@@ -18,7 +18,7 @@ class Park {
     updatePark(park) {
         this.location_info = park.location_info;
         this.payment_info = park.payment_info;
-        console.log(this);
+        //console.log(this);
     }
 
     searchKeyword(key) {

@@ -1,4 +1,5 @@
 let Joi = require('joi');
+let moment = require('moment');
 class Valid {
     constructor() {
     }
@@ -34,7 +35,6 @@ class Valid {
             car: Joi.array().items(Joi.number().min(0).error(new Error('2'))),
             rv: Joi.array().items(Joi.number().min(0).error(new Error('3')))
         });
-        console.log(park.payment_info);
         const result = Joi.validate(park.payment_info, schema);
         if (result.error == null) {
             return null;
@@ -53,7 +53,6 @@ class Valid {
         let obj1 = this.parkPostLoc(park);
         if (obj1 == null) {
             let obj2 = this.parkPostPay(park);
-            console.log(obj2);
             if (obj2 == null) {
                 return null;
             }
@@ -75,7 +74,6 @@ class Valid {
     }
 
     notePost(note, pid, Orders) {
-        console.log(Orders);
         let obj = {
             "type": "http://cs.iit.edu/~virgil/cs445/project/api/problems/data-validation",
             "title": "Your request data didn't pass validation",
@@ -92,6 +90,25 @@ class Valid {
         obj.instance += pid;
         return obj;
 
+    }
+    ReportDate(date, rid) {
+        let obj = {
+            "type": "http://cs.iit.edu/~virgil/cs445/project/api/problems/data-validation",
+            "title": "Your request data didn't pass validation",
+            "detail": "Wrong date format",
+            "status": 400,
+            "instance": "/reports/" + rid
+        };
+        let date1 = moment(date['end_date']).format("YYYY-MM-DD");
+        //console.log(date1);
+        //console.log('jere');
+        if (date1 == 'Invalid date') {
+            console.log('here');
+            return obj;
+
+        }
+        //console.log('returnong obj');
+        return null;
     }
 
 }

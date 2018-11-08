@@ -36,10 +36,11 @@ class Order {
     static payment_process() {
         if (!this.payment_processing) {
             this.payment_processing = {
-                "card_transaction_id": Order.setcardid(),
-                "date_and_time": moment().format()
+                "card_transaction_id": "123-4567-89",
+                "date_and_time": moment().format("YYYY-MM-DD")
             };
         }
+        else { }
         return this.payment_processing;
     }
     processOrder(park) {
@@ -65,6 +66,9 @@ class Order {
     }
     getOneOrder(visitor) {
         let newvisitor = _.omit(visitor, ["vid", "orders", "notes"]);
+        let card = newvisitor.payment_info.card;
+        let xx = 'xxxxxxxxxxx' + card.substring(card.length - 4, card.length);
+        newvisitor.payment_info.card = xx;
         let retObj = {
             "oid": this.oid,
             "pid": this.pid,
@@ -86,8 +90,6 @@ class Order {
         else if (this.vehicle.type.toLowerCase().includes(key.toLowerCase())) { return true; }
         else if (visitor.name.toLowerCase().includes(key.toLowerCase())) { return true; }
         else if (visitor.email.toLowerCase().includes(key.toLowerCase())) { return true; }
-        else if (this.payment_processing.state.card_transaction_id.toLowerCase().includes(key.toLowerCase())) { return true; }
-        else if (this.payment_processing.state.date_and_time.toLowerCase().includes(key.toLowerCase())) { return true; }
         else {
             return false;
         }
