@@ -21,18 +21,6 @@ class Order {
         if (!this.date) { this.date = moment().format("YYYY-MM-DD"); }
         return this.date;
     }
-    static setcardid() {
-
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 9; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-
-
-    }
     static payment_process() {
         if (!this.payment_processing) {
             this.payment_processing = {
@@ -52,6 +40,7 @@ class Order {
         else {
             this.amount = park.payment_info[this.vehicle.type][1];
         }
+
     }
 
     format() {

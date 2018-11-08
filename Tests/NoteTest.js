@@ -4,7 +4,7 @@ var moment = require('moment');
 
 var testobj = {
 
-    "vid": 411,
+    "vid": "400",
     "title": "No campground",
     "text": "This place is beautiful, too bad that there is no campground here."
 
@@ -15,14 +15,14 @@ var note = new Note(testobj.vid, 123, testobj.title, testobj.text);
 tap.equal(note.pid, 123);
 tap.equal(note.vid, testobj.vid);
 tap.equal(note.date, moment().format("YYYY-MM-DD"));
-tap.equal(note.nid, 300);
+tap.equal(note.nid, "300");
 tap.equal(note.title, testobj.title);
 tap.equal(note.text, testobj.text);
 
 // Note.format() 
 
 var formattedobj = {
-    "nid": 300,
+    "nid": "300",
     "date": moment().format("YYYY-MM-DD"),
     "title": "No campground"
 };
@@ -35,7 +35,7 @@ tap.equal(note.format().title, formattedobj.title);
 //Note.updateNote()
 
 changedobj = {
-    "vid": 511,
+    "vid": "511",
     "title": "very nicecampground",
     "text": "This place is horrible."
 };
