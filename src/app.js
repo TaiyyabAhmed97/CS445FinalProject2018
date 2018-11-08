@@ -192,6 +192,10 @@ app.route('/parkpay/notes/:noteId')
         res.send(200);
     });
 
+
+//ORDERS
+
+
 app.route('/parkpay/orders')
     .post(function (req, res) {
         let vid = '';
@@ -262,6 +266,10 @@ app.route('/parkpay/orders/:orderId')
 
     });
 
+
+// VISITORS
+
+
 app.route('/parkpay/visitors')
     .get(function (req, res) {
         if (_.has(req.query, 'key')) {
@@ -301,6 +309,10 @@ app.route('/parkpay/reports')
         ];
         res.send(obj);
     });
+
+
+// REPORTS
+
 
 app.route('/parkpay/reports/:rid')
     .get(function (req, res) {
