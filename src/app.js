@@ -259,7 +259,7 @@ app.route('/parkpay/orders/:orderId')
     .get(function (req, res) {
         let id = req.params.orderId;
         let obj = OrderSys[id];
-        //console.log(VisitorSys);
+        // console.log(OrderSys);
         retObj = obj.getOneOrder(VisitorSys[obj.vid]);
         res.send(retObj);
 

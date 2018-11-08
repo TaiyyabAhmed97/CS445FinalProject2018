@@ -103,7 +103,7 @@ class Valid {
         //console.log(date1);
         //console.log('jere');
         if (date1 == 'Invalid date') {
-            console.log('here');
+            //console.log('here');
             return obj;
 
         }
