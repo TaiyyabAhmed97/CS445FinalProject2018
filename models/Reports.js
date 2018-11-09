@@ -2,7 +2,7 @@ var _ = require('underscore');
 var moment = require('moment');
 var Valid = require('../models/Valid')
 class Reports {
-    constructor(rid, name) {
+    constructor(rid) {
         this.rid = rid;
         this.name = this.getname();
         this.start_date = "";
@@ -94,8 +94,8 @@ class Reports {
 
     genRevenuewDate(Parks, Orders, date) {
         this.end_date = moment(date['end_date']).format("YYYY-MM-DD");
-        console.log(moment(date['end_date']).format("YYYY-MM-DD"));
-        console.log(date);
+        // console.log(moment(date['end_date']).format("YYYY-MM-DD"));
+        //console.log(date);
         var Objectw_out_totalAdmissions = _.omit(this, ["total_admissions"]);
         let obj2 = {
             total_orders: 0,
