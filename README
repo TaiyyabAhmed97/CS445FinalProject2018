@@ -2,7 +2,7 @@
     -To start the server and install all dependencies, type ./startscript 
     -To run the unit tests and run the code coverage report, run ./testscript
 #Known Bugs
-    -
+    -The GET /search?key=keyword{&start_date=YYYYMMDD&end_date=YYYYMMDD} was not implemented due to time constraints
 #Credits and Acknowledgements
-    -
+    -I want to credit the professor because he constanly remidned us of the complex nature of this project and for us to get started early
     
