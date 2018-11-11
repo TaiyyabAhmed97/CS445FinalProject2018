@@ -127,8 +127,5 @@ class Reports {
         }
         return Objectw_out_totalAdmissions;
     }
-
 }
-
-
 module.exports = Reports;

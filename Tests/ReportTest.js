@@ -87,7 +87,7 @@ tap.equal(obj.total_revenue, 13);
 let report2 = new Reports(907);
 dates = { "end_date": "20181229" };
 report2.genAdmissionswDate(Parks, Orders, dates);
-console.log(report2);
+//console.log(report2);
 tap.equal(report2.rid, 907);
 tap.equal(report2.name, "Admissions report");
 tap.equal(report2.start_date, "");

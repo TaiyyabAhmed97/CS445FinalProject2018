@@ -117,12 +117,12 @@ tap.equal(retObj.payment_processing.date_and_time, order.getOneOrder(visitor).pa
 
 // Check if Search keyword through the object is correct: order.SearchKeyword()
 
-tap.equal(true, order.searchKeyword("4.50", visitor));
+tap.equal(false, order.searchKeyword("4.50", visitor));
 tap.equal(true, order.searchKeyword(moment().format("YYYY-MM-DD"), visitor));
 tap.equal(true, order.searchKeyword("IL", visitor));
 tap.equal(true, order.searchKeyword("GO", visitor));
 tap.equal(true, order.searchKeyword("ca", visitor));
 tap.equal(false, order.searchKeyword("4.50", visitor));
-tap.equal(false, order.searchKeyword("jane", visitor));
-tap.equal(false, order.searchKeyword("smith", visitor));
+tap.equal(true, order.searchKeyword("jane", visitor));
+tap.equal(true, order.searchKeyword("smith", visitor));
 tap.equal(false, order.searchKeyword("999", visitor));
