@@ -356,7 +356,7 @@ app.route('/parkpay/search')
         // console.log(req.query.start_date);
         search.query(key, dates, ParkSys, OrderSys, NoteSys, VisitorSys);
 
-        res.send(NoteSys);
+        res.send(search);
     })
 
 app.listen(8080);
