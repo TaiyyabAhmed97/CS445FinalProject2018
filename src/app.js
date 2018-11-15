@@ -9,6 +9,7 @@ var Order = require('../models/Order');
 var Visitor = require('../models/Visitor');
 var Valid = require('../models/Valid');
 var Report = require('../models/Reports');
+var Search = require('../models/Search');
 var _ = require('underscore');
 
 
@@ -345,6 +346,17 @@ app.route('/parkpay/reports/:rid')
 
         }
 
+    });
+app.route('/parkpay/search')
+    .get(function (req, res) {
+        var search = new Search();
+        let key = req.query['key'];
+        let dates = _.omit(req.query, ["key"]);
+        // console.log(req.query.key);
+        // console.log(req.query.start_date);
+        search.query(key, dates, ParkSys, OrderSys, NoteSys, VisitorSys);
+
+        res.send(NoteSys);
     })
 
 app.listen(8080);

@@ -70,7 +70,12 @@ class Reports {
         return Objectw_out_totalAdmissions;
     }
     genAdmissionswDate(Parks, Orders, date) {
-        this.end_date = moment(date['end_date']).format("YYYY-MM-DD");
+        this.end_date = Reports.CheckDate(date['end_date']);
+        this.start_date = Reports.CheckDate(date['start_date']);
+        let end_date = moment().add(this.end_date, 1);
+        let start_date = "";
+        if (this.start_date == "") { start_date = moment().format("YYYY-MM-DD") }
+        else { start_date = moment(end_date).subtract(1, 'days'); }
         let total = 0
         for (var x in Parks) {
             let obj = {
@@ -80,7 +85,7 @@ class Reports {
             };
             for (var y in Orders) {
 
-                if (Orders[y].pid == x && (moment(Orders[y].date).isSameOrBefore(this.end_date))) {
+                if (Orders[y].pid == x && (moment(Orders[y].date).isBetween(start_date, end_date))) {
                     obj.admissions += 1;
                     total += 1;
                 }
@@ -93,7 +98,13 @@ class Reports {
     }
 
     genRevenuewDate(Parks, Orders, date) {
-        this.end_date = moment(date['end_date']).format("YYYY-MM-DD");
+        this.end_date = Reports.CheckDate(date['end_date']);
+        this.start_date = Reports.CheckDate(date['start_date']);
+        let end_date = moment().add(this.end_date, 1);
+        let start_date = '';
+        if (this.start_date == "") { start_date = moment().format("YYYY-MM-DD") }
+        else { start_date = moment(end_date).subtract(1, 'days'); }
+
         // console.log(moment(date['end_date']).format("YYYY-MM-DD"));
         //console.log(date);
         var Objectw_out_totalAdmissions = _.omit(this, ["total_admissions"]);
@@ -110,7 +121,7 @@ class Reports {
                 revenue: 0.00
             };
             for (var y in Orders) {
-                if (Orders[y].pid == x && (moment(Orders[y].date).isSameOrBefore(this.end_date))) {
+                if (Orders[y].pid == x && (moment(Orders[y].date).isBetween(start_date, end_date))) {
                     obj.revenue += Orders[y].amount;
                     obj.orders += 1;
                     newobj.total_orders += 1;
@@ -126,6 +137,14 @@ class Reports {
 
         }
         return Objectw_out_totalAdmissions;
+    }
+    static CheckDate(date) {
+        if (date == null) {
+            return "";
+        }
+        else {
+            return moment(date).format("YYYY-MM-DD");
+        }
     }
 }
 module.exports = Reports;

@@ -1,5 +1,6 @@
 var tap = require('tap');
 var Reports = require('../models/Reports');
+var moment = require('moment');
 
 // CREATE new Report
 
@@ -92,10 +93,10 @@ tap.equal(report2.rid, 907);
 tap.equal(report2.name, "Admissions report");
 tap.equal(report2.start_date, "");
 tap.equal(report2.end_date, "2018-12-29");
-tap.equal(report2.total_admissions, 1);
+tap.equal(report2.total_admissions, 0);
 tap.equal(report2.detail_by_park[0].pid, '123');
 tap.equal(report2.detail_by_park[0].name, 'Apple River Canyon');
-tap.equal(report2.detail_by_park[0].admissions, 1);
+tap.equal(report2.detail_by_park[0].admissions, 0);
 
 // Test Generation of Revenue report with a Date: Report.genRevenuewDate()
 let report3 = new Reports(912);
@@ -107,8 +108,16 @@ tap.equal(obj1.start_date, "");
 tap.equal(obj1.end_date, "2018-12-29");
 tap.equal(obj1.detail_by_park[0].pid, '123');
 tap.equal(obj1.detail_by_park[0].name, 'Apple River Canyon');
-tap.equal(obj1.detail_by_park[0].orders, 1);
-tap.equal(obj1.detail_by_park[0].revenue, 13);
-tap.equal(obj1.total_orders, 1);
-tap.equal(obj1.total_revenue, 13);
+tap.equal(obj1.detail_by_park[0].orders, 0);
+tap.equal(obj1.detail_by_park[0].revenue, 0);
+tap.equal(obj1.total_orders, 0);
+tap.equal(obj1.total_revenue, 0);
+
+
+// Test CheckDate Function()
+
+let date = null;
+tap.equal("", Reports.CheckDate(date));
+let newdate = '20121212';
+tap.equal(moment(newdate).format("YYYY-MM-DD"), Reports.CheckDate(newdate));
 
